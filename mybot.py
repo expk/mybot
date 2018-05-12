@@ -1,5 +1,9 @@
+import logging
 import telebot
 
+
+logging.warning('Watch out!')  # will print a message to the console
+logging.info('I told you so')  # will not print anything
 
 access_token = '596275228:AAGyWbN1Nvs0BaMZFgf1ktNYjjh9iKyRRmE'
 # Создание бота с указанным токеном доступа
