@@ -1,25 +1,29 @@
-# -*- coding: utf-8 -*-
-import config
 import telebot
+import os
+from flask import Flask, request
 
-bot = telebot.TeleBot(config.token)
+bot = telebot.TeleBot('596275228:AAGyWbN1Nvs0BaMZFgf1ktNYjjh9iKyRRmE')
 
-#upd = bot.get_updates()
-#last_upd = upd[-1]
-#message_from_user = last_upd.message
-#print(message_from_user)
+server = Flask(__name__)
 
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
 
-@bot.message_handler(content_types=['text'])
-def handle_command(message):
-    if message.text == "а":
-        bot.send_message(message.chat.id, "Б")
-    elif message.text == "б":
-        bot.send_message(message.chat.id, "А")
-    else:
-        bot.send_message(message.chat.id, "Ты не умеешь играть в эту игру )))")
-#    print("Пришёл текст")
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def echo_message(message):
+    bot.reply_to(message, message.text)
 
+@server.route("/bot", methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
 
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url="https://bla-bla-bla/bot")
+    return "!", 200
 
-bot.polling(none_stop=True, interval = 0)
+server.run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
+server = Flask(__name__)
